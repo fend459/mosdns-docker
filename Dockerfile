@@ -9,10 +9,7 @@ RUN apk add --update git \
 	&& cd ./mosdns \
 	&& git fetch --all --tags \
 	&& git checkout tags/${TAG} \
-	&& go build -ldflags "-s -w -X main.version=${TAG}" -trimpath -o mosdns
-
-FROM --platform=${TARGETPLATFORM} alpine:latest
-LABEL maintainer="IrineSistiana <github.com/IrineSistiana>"
+	&& CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -extldflags '-static'" -o mosdns
 
 COPY --from=builder /root/mosdns/mosdns /usr/bin/
 
